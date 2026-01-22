@@ -1,0 +1,162 @@
+<!-- Header Navigation -->
+<div class="navbar">
+  <div class="nav-left">
+    <button class="back-btn" (click)="goBack()" title="Go back">← Back</button>
+    <h2 class="nav-title">Attendance Details</h2>
+  </div>
+  <div class="nav-right">
+    <span class="user-info">{{ currentUser }}</span>
+    <button class="logout-btn" (click)="logout()">
+      <span class="logout-icon">⤴</span> Logout
+    </button>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading attendance details...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error()) {
+    <div class="alert alert-error">
+      <span class="alert-icon">⚠️</span>
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Content -->
+  @if (!loading() && attendanceDetail()) {
+    <div class="content">
+      <!-- Header Card -->
+      <div class="header-card">
+        <div class="student-info">
+          <h1>{{ attendanceDetail()!.student_name }}</h1>
+          <p class="student-id">ID: {{ attendanceDetail()!.student_id }} | Roll: {{ attendanceDetail()!.roll_number }}</p>
+        </div>
+        <div class="attendance-summary">
+          <div class="summary-item">
+            <span class="label">Total Classes</span>
+            <span class="value">{{ attendanceDetail()!.total_classes }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Present</span>
+            <span class="value present">{{ attendanceDetail()!.present_count }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Absent</span>
+            <span class="value absent">{{ attendanceDetail()!.absent_count }}</span>
+          </div>
+          <div class="summary-item percentage">
+            <span class="label">Attendance Rate</span>
+            <span class="value" [style.color]="getAttendanceColor(attendanceDetail()!.overall_percentage)">
+              {{ attendanceDetail()!.overall_percentage }}%
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overall Progress -->
+      <div class="progress-card">
+        <h3>Overall Attendance Progress</h3>
+        <div class="progress-bar-container">
+          <div class="progress-bar-background">
+            <div 
+              class="progress-bar-fill" 
+              [style.width.%]="attendanceDetail()!.overall_percentage"
+              [style.background-color]="getAttendanceColor(attendanceDetail()!.overall_percentage)"
+            ></div>
+          </div>
+          <div class="progress-stats">
+            <span>{{ attendanceDetail()!.present_count }} Present out of {{ attendanceDetail()!.total_classes }} Classes</span>
+            <span class="percentage">{{ attendanceDetail()!.overall_percentage }}%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Breakdown -->
+      <div class="monthly-section">
+        <h2>Monthly Breakdown</h2>
+        <div class="months-container">
+          @for (month of attendanceDetail()!.attendance_by_month; track month.month) {
+            <div class="month-card">
+              <button 
+                class="month-header" 
+                (click)="toggleMonth(month.month)"
+                [class.expanded]="expandedMonth() === month.month"
+              >
+                <div class="month-title">
+                  <span class="month-name">{{ month.month }}</span>
+                  <span class="month-stats">
+                    {{ month.present }}/{{ month.total }} 
+                    <span class="percentage" [style.color]="getAttendanceColor(month.percentage)">
+                      ({{ month.percentage }}%)
+                    </span>
+                  </span>
+                </div>
+                <span class="toggle-icon">{{ expandedMonth() === month.month ? '▼' : '▶' }}</span>
+              </button>
+
+              <!-- Expanded Month Details -->
+              @if (expandedMonth() === month.month) {
+                <div class="month-details">
+                  <!-- Progress Bar -->
+                  <div class="month-progress">
+                    <div class="progress-bar-background">
+                      <div 
+                        class="progress-bar-fill" 
+                        [style.width.%]="month.percentage"
+                        [style.background-color]="getAttendanceColor(month.percentage)"
+                      ></div>
+                    </div>
+                  </div>
+
+                  <!-- Records List -->
+                  <div class="records-list">
+                    @for (record of month.records; track record.date) {
+                      <div class="record-item" [class.present]="record.status === 'P'" [class.absent]="record.status === 'A'">
+                        <div class="record-left">
+                          <span class="date">{{ record.date }}</span>
+                          <span class="time">{{ record.time }}</span>
+                        </div>
+                        <span class="status-badge" [style.background-color]="getStatusColor(record.status)">
+                          {{ getStatusLabel(record.status) }}
+                        </span>
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Month Summary -->
+                  <div class="month-summary">
+                    <div class="summary-stat">
+                      <span class="stat-label">Present Days:</span>
+                      <span class="stat-value">{{ month.present }}</span>
+                    </div>
+                    <div class="summary-stat">
+                      <span class="stat-label">Absent Days:</span>
+                      <span class="stat-value">{{ month.absent }}</span>
+                    </div>
+                    <div class="summary-stat">
+                      <span class="stat-label">Total Days:</span>
+                      <span class="stat-value">{{ month.total }}</span>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="btn btn-primary" (click)="goBack()">← Back to Dashboard</button>
+      </div>
+    </div>
+  }
+</div>

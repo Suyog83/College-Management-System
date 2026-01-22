@@ -1,0 +1,106 @@
+<div class="login-wrapper">
+  <div class="login-container">
+    <!-- Header Card -->
+    <div class="login-card">
+      <!-- Icon -->
+      <div class="icon-container">
+        <div class="icon-circle">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 10v6m0 0a8 8 0 01-16 0m16 0V7a2 2 0 00-2-2H4a2 2 0 00-2 2v9m0 0a8 8 0 0016 0"></path>
+            <path d="M8 11h.01M16 11h.01M8 19h8"></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Title -->
+      <h1 class="title">College Management System</h1>
+      <p class="subtitle">Sign in to your account</p>
+
+      <!-- Error Message -->
+      @if (error()) {
+        <div class="alert alert-error">
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <!-- Form Fields -->
+      <div class="form-group">
+        <label class="label">Email / Username</label>
+        <input
+          type="text"
+          class="input"
+          placeholder="Enter your email"
+          [(ngModel)]="email"
+          [disabled]="loading()"
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="label">Password</label>
+        <input
+          type="password"
+          class="input"
+          placeholder="Enter your password"
+          [(ngModel)]="password"
+          [disabled]="loading()"
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="label">Role</label>
+        <select
+          class="select"
+          [(ngModel)]="role"
+          [disabled]="loading()"
+        >
+          <option value="Student">Student</option>
+          <option value="Teacher">Teacher</option>
+          <!--<option value="Admin">Admin</option> -->
+        </select>
+      </div>
+
+      <!-- Login Button -->
+      <button
+        class="btn-login"
+        (click)="onLogin()"
+        [disabled]="loading()"
+      >
+        @if (loading()) {
+          <span class="spinner"></span>
+          Signing in...
+        } @else {
+          Sign In
+        }
+      </button>
+
+      <!-- Demo Credentials -->
+      <div class="credentials-section">
+        <p class="credentials-title">Demo Credentials</p>
+        
+        <div class="credential-card student-card">
+          <p><strong>Student:</strong> Arjun-101</p>
+          <p><strong>Password:</strong> student123</p>
+          <button class="quick-btn" (click)="quickLoginStudent()" [disabled]="loading()">
+            Quick Login
+          </button>
+        </div>
+
+        <div class="credential-card teacher-card">
+          <p><strong>Teacher:</strong> admin</p>
+          <p><strong>Password:</strong> teacher123</p>
+          <button class="quick-btn" (click)="quickLoginTeacher()" [disabled]="loading()">
+            Quick Login
+          </button>
+          
+        </div>
+        
+      </div>
+     
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>© 2026 College Management System. All rights reserved.</p>
+    </div>
+  </div>
+</div>
